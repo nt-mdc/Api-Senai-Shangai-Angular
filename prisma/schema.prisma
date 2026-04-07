@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  password_hash String
+  role          String   @default("admin")
+  created_at    DateTime @default(now())
+
+  turism_spots TurismSpot[]
+}
+
+model TurismSpot {
+  id              Int      @id @default(autoincrement())
+  name            String
+  description     String   @db.VarChar(200)
+  district        String
+  category        String
+  latitude        Float
+  longitude       Float
+  requires_ticket Boolean  @default(false)
+  created_by      Int
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  author User         @relation(fields: [created_by], references: [id])
+  images TurismImage[]
+}
+
+model TurismImage {
+  id       Int    @id @default(autoincrement())
+  spot_id  Int
+  file_url String
+
+  spot TurismSpot @relation(fields: [spot_id], references: [id], onDelete: Cascade)
+}
