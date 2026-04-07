@@ -9,7 +9,7 @@ async function uploadImages(files, spotName) {
   for (const file of files) {
     const pathname = `turism/${slug}/${Date.now()}-${file.originalname}`;
     const blob = await put(pathname, file.buffer, {
-      access: "private",
+      access: "public",
       contentType: file.mimetype,
     });
     urls.push(blob.url);
