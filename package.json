@@ -4,6 +4,7 @@
   "description": "REST API for Tourism Spots - Node.js + Express + Prisma + Vercel",
   "main": "api/index.js",
   "scripts": {
+    "build": "npx prisma generate",
     "dev": "node server.js",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
