@@ -6,8 +6,8 @@ const prisma = new PrismaClient()
 // Cada entrada: [name (2 nomes únicos), email, senha]
 const admins = [
   ['Admin',              'admin@shanghai.com',         'admin123'],
-  ['Andrey Luiz',        'andrey.luiz@shanghai.com',   'admin123'],
-  ['Arthur Hammes',      'arthur.hammes@shanghai.com', 'admin123'],
+  ['Andrey Luiz',        'andrey.luiz@shanghai.com',   'admin123'], //
+  ['Arthur Hammes',      'arthur.hammes@shanghai.com', 'admin123'], 
   ['Bernardo Mello',     'bernardo.mello@shanghai.com','admin123'],
   ['Caio Lacerda',       'caio.lacerda@shanghai.com',  'admin123'],
   ['Danilo Thomaz',      'danilo.thomaz@shanghai.com', 'admin123'],

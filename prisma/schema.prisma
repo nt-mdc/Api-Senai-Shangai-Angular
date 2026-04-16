@@ -16,6 +16,10 @@ model User {
   created_at    DateTime @default(now())
 
   turism_spots TurismSpot[]
+  pets         Pet[]
+  courses      Course[]
+  properties   Property[]
+  dishes       Dish[]
 }
 
 model TurismSpot {
@@ -41,4 +45,72 @@ model TurismImage {
   file_url String
 
   spot TurismSpot @relation(fields: [spot_id], references: [id], onDelete: Cascade)
+}
+
+// ─── Atividade 1: Amigo Fiel — Portal de Adoção de Pets ─────────────────────
+
+model Pet {
+  id          Int      @id @default(autoincrement())
+  name        String
+  species     String
+  age         Int
+  size        String
+  description String?  @db.Text
+  status      String   @default("disponivel")
+  created_by  Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  author User @relation(fields: [created_by], references: [id])
+}
+
+// ─── Atividade 2: EduTech — Catálogo de Cursos Online ────────────────────────
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  title       String
+  instructor  String
+  category    String
+  workload    Int
+  price       Float
+  description String?  @db.Text
+  created_by  Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  author User @relation(fields: [created_by], references: [id])
+}
+
+// ─── Atividade 3: EasyHome — Sistema de Imobiliária ─────────────────────────
+
+model Property {
+  id          Int      @id @default(autoincrement())
+  type        String
+  address     String
+  area        Float
+  price       Float
+  modality    String
+  description String?  @db.Text
+  status      String   @default("disponivel")
+  created_by  Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  author User @relation(fields: [created_by], references: [id])
+}
+
+// ─── Atividade 4: Chef's Menu — Cardápio Digital ─────────────────────────────
+
+model Dish {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category    String
+  price       Float
+  description String?  @db.Text
+  available   Boolean  @default(true)
+  created_by  Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  author User @relation(fields: [created_by], references: [id])
 }
