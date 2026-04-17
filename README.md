@@ -2,7 +2,7 @@
 
 REST API built with **Node.js**, **Express**, **Prisma ORM**, and **PostgreSQL (Neon)**, optimized for deployment on **Vercel** as serverless functions.
 
-This API serves as the backend for **5 independent projects**, each designed as a standalone Angular exercise. All projects share the same authentication system and database infrastructure.
+This API serves as the backend for **7 independent projects**, each designed as a standalone Angular exercise. All projects share the same authentication system and database infrastructure.
 
 ---
 
@@ -16,6 +16,9 @@ This API serves as the backend for **5 independent projects**, each designed as 
 | `/api/courses` | **EduTech** | Catálogo de Cursos Online |
 | `/api/properties` | **EasyHome** | Sistema de Imobiliária |
 | `/api/dishes` | **Chef's Menu** | Cardápio Digital Interno |
+| `/api/plans` | **Fitness Hub** | Planos de Assinatura (Academia) |
+| `/api/modalities` | **Fitness Hub** | Modalidades de Treino |
+| `/api/events` | **Event-IT** | Plataforma de Eventos |
 | `/api/admin/*` | **Admin** | Rotas protegidas (CRUD) de todos os projetos |
 
 ---
@@ -243,6 +246,58 @@ npx prisma db seed
 
 ---
 
+### 💪 Fitness Hub — `/api/plans` (público)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/plans` | Listar todos os planos |
+| `GET` | `/api/plans/:id` | Buscar plano por ID |
+
+**Query filters para `GET /api/plans`:**
+
+| Param | Tipo | Descrição |
+|---|---|---|
+| `name` | string | Busca parcial, case-insensitive |
+| `type` | string | Tipo exato (Mensal, Semestral, Anual, VIP) |
+| `priceMin` | number | Preço mínimo (faixa de preço) |
+| `priceMax` | number | Preço máximo (faixa de preço) |
+
+---
+
+### 💪 Fitness Hub — `/api/modalities` (público)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/modalities` | Listar todas as modalidades |
+| `GET` | `/api/modalities/:id` | Buscar modalidade por ID |
+
+**Query filters para `GET /api/modalities`:**
+
+| Param | Tipo | Descrição |
+|---|---|---|
+| `name` | string | Busca parcial, case-insensitive |
+| `level` | string | Nível exato (Iniciante, Intermediário, Avançado, Todos os Níveis) |
+| `status` | string | Status exato (Ativa, Inativa) |
+
+---
+
+### 🎫 Event-IT — `/api/events` (público)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/events` | Listar todos os eventos |
+| `GET` | `/api/events/:id` | Buscar evento por ID |
+
+**Query filters para `GET /api/events`:**
+
+| Param | Tipo | Descrição |
+|---|---|---|
+| `name` | string | Busca parcial, case-insensitive |
+| `category` | string | Categoria exata (Workshop, Palestra, Conferência) |
+| `date` | string | Data específica (YYYY-MM-DD) |
+
+---
+
 ### 🔐 Admin Routes (requer `Authorization: Bearer <token>`)
 
 > **Todas as rotas abaixo exigem autenticação JWT com role `admin`.**
@@ -334,6 +389,60 @@ npx prisma db seed
 | `price` | Obrigatório, ≥ 0.01 |
 | `available` | Booleano, default `true` |
 
+#### Fitness Hub — CRUD de Planos
+
+| Method | Endpoint | Body (JSON) | Description |
+|---|---|---|---|
+| `POST` | `/api/admin/plans` | `{ name, type, price, weekly_frequency, description }` | Cadastrar plano |
+| `PUT` | `/api/admin/plans/:id` | `{ name?, type?, price?, weekly_frequency?, description? }` | Editar plano |
+| `DELETE` | `/api/admin/plans/:id` | — | Excluir plano |
+
+**Validações:**
+
+| Campo | Regra |
+|---|---|
+| `name` | Obrigatório |
+| `type` | Obrigatório (Mensal, Semestral, Anual, VIP) |
+| `price` | Obrigatório, ≥ 0.01 |
+| `weekly_frequency` | Obrigatório, entre 1 e 7 |
+| `description` | Obrigatório, mínimo 20 caracteres |
+
+#### Fitness Hub — CRUD de Modalidades
+
+| Method | Endpoint | Body (JSON) | Description |
+|---|---|---|---|
+| `POST` | `/api/admin/modalities` | `{ name, description, level, status? }` | Cadastrar modalidade |
+| `PUT` | `/api/admin/modalities/:id` | `{ name?, description?, level?, status? }` | Editar modalidade |
+| `DELETE` | `/api/admin/modalities/:id` | — | Excluir modalidade |
+
+**Validações:**
+
+| Campo | Regra |
+|---|---|
+| `name` | Obrigatório |
+| `description` | Obrigatório, mínimo 20 caracteres |
+| `level` | Obrigatório (Iniciante, Intermediário, Avançado, Todos os Níveis) |
+| `status` | `ativa` (default) ou `inativa` |
+
+#### Event-IT — CRUD de Eventos
+
+| Method | Endpoint | Body (JSON) | Description |
+|---|---|---|---|
+| `POST` | `/api/admin/events` | `{ name, category, date_time, location, max_capacity, description? }` | Cadastrar evento |
+| `PUT` | `/api/admin/events/:id` | `{ name?, category?, date_time?, location?, max_capacity?, description? }` | Editar evento |
+| `DELETE` | `/api/admin/events/:id` | — | Excluir evento |
+
+**Validações:**
+
+| Campo | Regra |
+|---|---|
+| `name` | Obrigatório |
+| `category` | Obrigatório (Workshop, Palestra, Conferência) |
+| `date_time` | Obrigatório, não permite datas retroativas |
+| `location` | Obrigatório |
+| `max_capacity` | Obrigatório, ≥ 1 |
+| `description` | Opcional |
+
 ---
 
 ## 📂 Project Structure
@@ -343,7 +452,7 @@ npx prisma db seed
 ├── api/
 │   └── index.js                    # Vercel entry point
 ├── prisma/
-│   ├── schema.prisma                # Database schema (User, TurismSpot, Pet, Course, Property, Dish)
+│   ├── schema.prisma                # Database schema (User, TurismSpot, Pet, Course, Property, Dish, Plan, Modality, Event)
 │   ├── seed.js                      # Seed script (admin users)
 │   └── migrations/                  # SQL migrations
 ├── src/
@@ -356,7 +465,10 @@ npx prisma db seed
 │   │   ├── petController.js         # Amigo Fiel CRUD
 │   │   ├── courseController.js      # EduTech CRUD
 │   │   ├── propertyController.js    # EasyHome CRUD
-│   │   └── dishController.js        # Chef's Menu CRUD
+│   │   ├── dishController.js        # Chef's Menu CRUD
+│   │   ├── planController.js        # Fitness Hub Plans CRUD
+│   │   ├── modalityController.js    # Fitness Hub Modalities CRUD
+│   │   └── eventController.js       # Event-IT CRUD
 │   ├── middlewares/
 │   │   ├── authGuard.js             # JWT verification
 │   │   └── adminGuard.js            # Admin role check
@@ -368,6 +480,9 @@ npx prisma db seed
 │   │   ├── courses.js               # GET /api/courses
 │   │   ├── properties.js            # GET /api/properties
 │   │   ├── dishes.js                # GET /api/dishes
+│   │   ├── plans.js                 # GET /api/plans
+│   │   ├── modalities.js            # GET /api/modalities
+│   │   ├── events.js                # GET /api/events
 │   │   └── admin.js                 # All protected CRUD routes
 │   ├── services/
 │   │   ├── authService.js           # Auth logic (JWT, bcrypt)
@@ -375,7 +490,10 @@ npx prisma db seed
 │   │   ├── petService.js            # Pet business logic
 │   │   ├── courseService.js         # Course business logic
 │   │   ├── propertyService.js       # Property business logic
-│   │   └── dishService.js           # Dish business logic + toggle
+│   │   ├── dishService.js           # Dish business logic + toggle
+│   │   ├── planService.js           # Plan business logic
+│   │   ├── modalityService.js       # Modality business logic
+│   │   └── eventService.js          # Event business logic
 │   └── app.js                       # Express configuration
 ├── docs/                            # API documentation pages
 │   ├── amigo-fiel.html
@@ -399,6 +517,9 @@ User (shared)
 ├── Course       (EduTech)
 ├── Property     (EasyHome)
 ├── Dish         (Chef's Menu)
+├── Plan         (Fitness Hub)
+├── Modality     (Fitness Hub)
+├── Event        (Event-IT)
 ├── TurismSpot   (Shanghai)
 │   └── TurismImage
 ```

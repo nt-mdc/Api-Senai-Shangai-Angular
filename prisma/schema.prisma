@@ -20,6 +20,9 @@ model User {
   courses      Course[]
   properties   Property[]
   dishes       Dish[]
+  plans        Plan[]
+  modalities   Modality[]
+  events       Event[]
 }
 
 model TurismSpot {
@@ -111,6 +114,53 @@ model Dish {
   created_by  Int
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+
+  author User @relation(fields: [created_by], references: [id])
+}
+
+// ─── Atividade 5: Fitness Hub — Gestão de Planos e Treinos ──────────────────
+
+model Plan {
+  id               Int      @id @default(autoincrement())
+  name             String
+  type             String
+  price            Float
+  weekly_frequency Int
+  description      String   @db.Text
+  created_by       Int
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  author User @relation(fields: [created_by], references: [id])
+}
+
+model Modality {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String   @db.Text
+  level       String
+  status      String   @default("ativa")
+  created_by  Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  author User @relation(fields: [created_by], references: [id])
+}
+
+// ─── Atividade 6: Event-IT — Plataforma de Eventos ──────────────────────────
+
+model Event {
+  id               Int      @id @default(autoincrement())
+  name             String
+  category         String
+  date_time        DateTime
+  location         String
+  description      String?  @db.Text
+  max_capacity     Int
+  registered_count Int      @default(0)
+  created_by       Int
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
 
   author User @relation(fields: [created_by], references: [id])
 }

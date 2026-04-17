@@ -472,3 +472,210 @@ npx ng serve
 ```
 
 **API URL:** `apiUrl: ""`
+
+
+# Fitness Hub: Gestão de Planos e Treinos
+
+Um sistema interno para academias ou estúdios de personal trainer gerenciarem seus planos de assinatura e a lista de modalidades oferecidas.
+
+**Funcionalidades:**
+- Tela de login com rota protegida: Acesso restrito para recepcionistas e gestores.
+- CRUD de Planos e Modalidades: Gerenciar nome, descrição, preço e frequência semanal.
+- Filtro por nome ou faixa de preço: Facilitar a busca por planos e modalidades específicos.
+- Validação ao cadastrar: Impedir preço zerado e descrição abaixo do tamanho mínimo.
+- Tela pública: Vitrine visual dos planos e modalidades disponíveis para novos clientes.
+
+Para estruturar o Fitness Hub no Angular, é ideal separar as responsabilidades em componentes claros, utilizando Reactive Forms para as validações e Route Guards para a proteção das rotas. Crie um componente reutilizável `PlanCardComponent` para exibir os cards dos planos na tela pública, recebendo os dados via `@Input()`. Utilize o `CurrencyPipe` para formatar os preços no padrão BRL (`R$`) e o operador `debounceTime` do RxJS para controlar a busca por faixa de preço sem disparar requisições excessivas.
+
+Abaixo, descrevemos os campos e o conteúdo sugerido para cada tela:
+
+## 1. Tela de Login (Acesso Restrito)
+
+Esta tela é o portão de entrada para recepcionistas e gestores. Deve ser simples e focar na captura de credenciais.
+
+| Campo | Tipo de Input | Validações |
+|---|---|---|
+| E-mail | `email` | `Validators.required`, `Validators.email` |
+| Senha | `password` | `Validators.required`, `Validators.minLength(6)` |
+
+**Conteúdo Adicional:**
+- Botão de "Entrar".
+- Mensagens de erro dinâmicas (ex: "Usuário ou senha inválidos").
+
+---
+
+## 2. Tela Pública: Vitrine de Planos e Modalidades
+
+A vitrine do sistema. O objetivo aqui é apresentar os planos e modalidades para atrair novos clientes.
+
+**Conteúdo da Tela:**
+- **Barra de Busca:** Campo de texto para filtrar por nome da modalidade, com `debounceTime(300ms)` via RxJS.
+- **Filtro por Faixa de Preço:** Dois campos numéricos (De / Até) para delimitar o intervalo de preço dos planos.
+- **Seção de Planos (`PlanCardComponent`):** Grid de cards com os planos de assinatura disponíveis, exibindo:
+  - Nome do Plano, Preço formatado com `CurrencyPipe` (BRL), Descrição e Frequência Semanal.
+  - Badge de destaque para o plano "VIP".
+  - Botão "Quero me Matricular": Abre um modal ou exibe o contato da academia.
+- **Seção de Modalidades:** Lista ou grid visual com as modalidades oferecidas (ex: Crossfit, Yoga, Musculação), exibindo nome e descrição de cada uma.
+
+---
+
+## 3. Tela de Gerenciamento (Dashboard Admin)
+
+Exclusiva para recepcionistas e gestores (protegida por `AuthGuard`). Uma visão tabular para controle rápido dos planos e modalidades cadastradas.
+
+**Conteúdo da Tela:**
+- Botões **"Novo Plano"** e **"Nova Modalidade"**: Direcionam para seus respectivos formulários de cadastro.
+- **Tabela de Planos:**
+  - Colunas: Nome, Preço, Frequência Semanal, Status.
+  - Ações: Ícones para **Editar** (Lápis) e **Excluir** (Lixeira).
+- **Tabela de Modalidades:**
+  - Colunas: Nome, Descrição, Status.
+  - Ações: Ícones para **Editar** (Lápis) e **Excluir** (Lixeira).
+- **Status de Autenticação:** Botão de "Sair" (Logout).
+
+---
+
+## 4. Formulário de CRUD (Cadastro/Edição de Planos)
+
+Onde as regras de validação dos planos são aplicadas via `FormGroup`.
+
+| Campo | Tipo de Input | Conteúdo / Regra |
+|---|---|---|
+| Nome do Plano | `text` | `Validators.required` |
+| Tipo | `select` | Opções: Mensal, Semestral, Anual, VIP |
+| Preço (R$) | `number` | `Validators.required`, `Validators.min(0.01)` |
+| Frequência Semanal | `number` | `Validators.required`, `Validators.min(1)`, `Validators.max(7)` |
+| Descrição | `textarea` | `Validators.required`, `Validators.minLength(20)` |
+
+## 5. Formulário de CRUD (Cadastro/Edição de Modalidades)
+
+Onde as regras de validação das modalidades são aplicadas via `FormGroup`.
+
+| Campo | Tipo de Input | Conteúdo / Regra |
+|---|---|---|
+| Nome da Modalidade | `text` | `Validators.required` |
+| Descrição | `textarea` | `Validators.required`, `Validators.minLength(20)` |
+| Nível | `select` | Opções: Iniciante, Intermediário, Avançado, Todos os Níveis |
+| Status | `select` | Opções: Ativa, Inativa |
+
+**Lógica de Validação no Angular:**
+Utilize `Validators.min(0.01)` no campo Preço para garantir que nenhum plano seja cadastrado gratuitamente por engano. Aplique `Validators.minLength(20)` no campo Descrição tanto em Planos quanto em Modalidades, exibindo a mensagem de erro de forma reativa no template (ex: "A descrição deve ter pelo menos 20 caracteres"). Para o filtro de faixa de preço, use um `FormGroup` separado com os campos `precoMin` e `precoMax`, e combine-os com o operador `combineLatest` do RxJS para atualizar a listagem sempre que um dos dois valores mudar.
+
+---
+
+## Estrutura Técnica Sugerida
+
+```
+guards/         → auth.guard.ts
+interceptors/   → auth.interceptor.ts
+services/       → auth.service.ts, plan.service.ts, modality.service.ts
+components/     → plan-card/, navbar/
+pages/          → login/, public-showcase/, admin/dashboard/, admin/plan-form/, admin/modality-form/
+```
+
+**Comandos para criar os arquivos:**
+
+```bash
+# 1. Criar o projeto
+npx ng new fitness-hub --ssr --style=css --routing
+
+# 2. Serviços
+npx ng generate service services/auth
+npx ng generate service services/plan
+npx ng generate service services/modality
+
+# 3. Functional Guard
+npx ng generate guard guards/auth --type=canActivate
+
+# 4. Componentes Standalone
+npx ng generate component components/navbar
+npx ng generate component components/plan-card
+npx ng generate component pages/login
+npx ng generate component pages/public-showcase
+npx ng generate component pages/admin/dashboard
+npx ng generate component pages/admin/plan-form
+npx ng generate component pages/admin/modality-form
+
+# 5. Interceptor
+npx ng generate interceptor interceptors/auth
+
+# 6. Executar o projeto
+npx ng serve
+```
+
+**API URL:** `apiUrl: ""`
+
+
+## Event-it
+Uma plataforma para organizar workshops, palestras e conferências acadêmicas ou corporativas.
+Funcionalidades: 
+Tela de login com rota protegida: Acesso restrito para organizadores. 
+CRUD de eventos: Gerenciar nome, data, local, descrição e limite de vagas. 
+Filtro por categoria ou data: Facilitar a busca por eventos específicos. 
+Validação ao cadastrar: Impedir datas retroativas ou campos vazios. 
+Tela pública: Listagem dos eventos disponíveis para inscrição.
+Para estruturar o Event-IT no Angular, é ideal separar as responsabilidades em componentes claros, utilizando Reactive Forms para as validações e Route Guards para a proteção das rotas.
+Abaixo, descrevo os campos e o conteúdo sugerido para cada tela:
+
+1. Tela de Login (Acesso Restrito)
+Esta tela é o portão de entrada para os organizadores. Deve ser simples e focar na captura de credenciais.
+Campo, Tipo de Input e Validações: o campo de E-mail utiliza input do tipo email e possui as validações Validators.required e Validators.email. Já o campo de Senha utiliza input do tipo password, com as validações Validators.required e Validators.minLength(6).
+Conteúdo Adicional:
+Botão de "Entrar".
+Mensagens de erro dinâmicas (ex: "Usuário ou senha inválidos").
+
+2. Tela Pública: Listagem de Eventos
+A vitrine do sistema. O objetivo aqui é a inscrição.
+Conteúdo da Tela:
+Barra de Busca: Campo de texto para filtrar pelo nome do evento.
+Filtros Rápidos: Dropdown de Categoria (ex: Workshop, Palestra, Congresso).
+Grid de Cards: Cada card representando um evento com:
+Título, Data/Hora, Local e uma breve descrição.
+Badge de "Vagas Esgotadas" caso o limite tenha sido atingido.
+Botão de Inscrição: Abre um modal ou redireciona para confirmação de dados do participante.
+
+3. Tela de Gerenciamento (Dashboard Admin)
+Exclusiva para organizadores (protegida por AuthGuard). Uma visão tabular para controle rápido.
+Conteúdo da Tela:
+Botão "Novo Evento": Direciona para o formulário de cadastro.
+Tabela de Eventos:
+Colunas: Nome, Data, Vagas Ocupadas/Totais, Status.
+Ações: Ícones para Editar (Lápis) e Excluir (Lixeira).
+Status de Autenticação: Botão de "Sair" (Logout).
+
+4. Formulário de CRUD (Cadastro/Edição de Eventos)
+Onde as regras de negócio de validação são aplicadas via FormGroup.
+Campo, Tipo de Input e Conteúdo/Regra: o campo Nome do Evento utiliza input do tipo text e possui a validação Validators.required. O campo Categoria utiliza um select com opções como Workshop, Palestra, Conferência, entre outras. O campo Data e Hora utiliza input do tipo datetime-local e conta com uma validação customizada para impedir datas retroativas. Já o campo Local utiliza input do tipo text, permitindo informar um endereço físico ou um link para evento online. O campo Descrição utiliza um textarea para detalhar o que será abordado no evento. Por fim, o campo Limite de Vagas utiliza input do tipo number, com as validações Validators.required e Validators.min(1).
+
+Lógica de Validação no Angular:
+Utilize um Validator customizado para comparar a new Date() com o valor inserido no campo de data, garantindo que o evento não seja criado no passado.
+
+Estrutura Técnica Sugerida:
+Para manter o projeto organizado, considere a seguinte estrutura de pastas:
+guards/: auth.guard.ts para verificar se o token de acesso existe antes de entrar nas rotas de CRUD.
+interceptors/: Para anexar o token JWT automaticamente em cada requisição ao backend.
+services/: EventService para chamadas de API e AuthService para login/logout.
+components/: Componentes reutilizáveis como botões, inputs estilizados e o Card de evento.
+Comandos para criar os arquivos:
+# 1. Criar o projeto com SSR (Server-Side Rendering) e sem Módulos
+npx ng new event-it --ssr --style=css --routing
+
+# 2. Serviços (Singleton por padrão)
+npx ng generate service services/auth
+npx ng generate service services/event
+
+# 3. Functional Guard (A nova regra: Guards agora são funções, não classes)
+npx ng generate guard guards/auth --type=canActivate
+
+# 4. Componentes Standalone (Páginas e UI)
+npx ng generate component components/navbar
+npx ng generate component pages/login
+npx ng generate component pages/event-list
+npx ng generate component pages/admin/dashboard
+npx ng generate component pages/admin/event-form
+
+# 5. Interceptor Funcional (Para tokens JWT)
+npx ng generate interceptor interceptors/auth
+
+#6. Executar o projeto
+npx ng serve

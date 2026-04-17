@@ -6,6 +6,9 @@ const petController = require('../controllers/petController')
 const courseController = require('../controllers/courseController')
 const propertyController = require('../controllers/propertyController')
 const dishController = require('../controllers/dishController')
+const planController = require('../controllers/planController')
+const modalityController = require('../controllers/modalityController')
+const eventController = require('../controllers/eventController')
 const upload = require('../config/multer')
 
 const router = Router()
@@ -41,5 +44,20 @@ router.post('/dishes', dishController.create)
 router.put('/dishes/:id', dishController.update)
 router.patch('/dishes/:id/toggle', dishController.toggleAvailability)
 router.delete('/dishes/:id', dishController.remove)
+
+// Admin plans CRUD (Fitness Hub)
+router.post('/plans', planController.create)
+router.put('/plans/:id', planController.update)
+router.delete('/plans/:id', planController.remove)
+
+// Admin modalities CRUD (Fitness Hub)
+router.post('/modalities', modalityController.create)
+router.put('/modalities/:id', modalityController.update)
+router.delete('/modalities/:id', modalityController.remove)
+
+// Admin events CRUD (Event-IT)
+router.post('/events', eventController.create)
+router.put('/events/:id', eventController.update)
+router.delete('/events/:id', eventController.remove)
 
 module.exports = router

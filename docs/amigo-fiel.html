@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigo Fiel - API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF8552;
+            --secondary: #297373;
+            --bg: #FAFAFA;
+            --text: #2D3142;
+            --accent: #E1E5EE;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, #fff 0%, #f0f4f8 100%);
+            border-radius: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "🐾";
+            position: absolute;
+            font-size: 200px;
+            top: -50px;
+            right: -50px;
+            opacity: 0.05;
+            transform: rotate(15deg);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        section {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        section:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 25px;
+            color: var(--secondary);
+            border-left: 5px solid var(--primary);
+            padding-left: 15px;
+        }
+
+        .endpoint-card {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .method {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            margin-right: 10px;
+            text-transform: uppercase;
+        }
+
+        .method.get { background: #e3f2fd; color: #1976d2; }
+        .method.post { background: #e8f5e9; color: #388e3c; }
+        .method.put { background: #fff3e0; color: #f57c00; }
+        .method.delete { background: #ffebee; color: #d32f2f; }
+
+        .url {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        code {
+            background: #f1f1f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="animate">
+            <p class="subtitle">Atividade 1</p>
+            <h1>Amigo Fiel</h1>
+            <p>Portal de Adoção de Pets — Transformando vidas uma pata de cada vez.</p>
+        </header>
+
+        <section class="animate delay-1">
+            <h2>Público <span>(Consumidor)</span></h2>
+            
+            <div class="endpoint-card">
+                <span class="method get">GET</span>
+                <span class="url">/api/pets</span>
+                <p style="margin-top: 10px;">Lista todos os pets disponíveis. Suporta filtros por nome, espécie e porte.</p>
+                <table>
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                    </tr>
+                    <tr>
+                        <td><code>name</code></td>
+                        <td>String</td>
+                        <td>Nome ou parte do nome (case-insensitive).</td>
+                    </tr>
+                    <tr>
+                        <td><code>species</code></td>
+                        <td>String</td>
+                        <td>Cachorro, Gato, Ave, Roedor, Outro.</td>
+                    </tr>
+                    <tr>
+                        <td><code>size</code></td>
+                        <td>String</td>
+                        <td>Pequeno, Médio, Grande.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="endpoint-card">
+                <span class="method get">GET</span>
+                <span class="url">/api/pets/:id</span>
+                <p style="margin-top: 10px;">Detalhes específicos de um pet.</p>
+            </div>
+        </section>
+
+        <section class="animate delay-2">
+            <h2>Administração <span>(Protegido)</span></h2>
+            <p style="margin-bottom: 20px;">Requer Header: <code>Authorization: Bearer &lt;token&gt;</code></p>
+            
+            <div class="endpoint-card">
+                <span class="method post">POST</span>
+                <span class="url">/api/admin/pets</span>
+                <p style="margin-top: 10px;">Cadastra um novo amigo no portal.</p>
+            </div>
+
+            <div class="endpoint-card">
+                <span class="method put">PUT</span>
+                <span class="url">/api/admin/pets/:id</span>
+                <p style="margin-top: 10px;">Atualiza dados de um pet existente.</p>
+            </div>
+
+            <div class="endpoint-card">
+                <span class="method delete">DELETE</span>
+                <span class="url">/api/admin/pets/:id</span>
+                <p style="margin-top: 10px;">Remove o pet do sistema.</p>
+            </div>
+        </section>
+
+        <footer>
+            &copy; 2026 Shanghai Expedition Admin Panel — API Docs
+        </footer>
+    </div>
+</body>
+</html>
