@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Hub - API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon: #ccff00;
+            --dark: #000;
+            --gray: #1a1a1a;
+            --text: #fff;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            padding: 100px 50px;
+            background: linear-gradient(45deg, #000, #111);
+            border: 1px solid var(--neon);
+            margin: 40px 0;
+            text-align: center;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+        }
+
+        h1 {
+            font-family: 'Teko', sans-serif;
+            font-size: 8rem;
+            text-transform: uppercase;
+            line-height: 0.8;
+            color: var(--neon);
+            letter-spacing: -2px;
+        }
+
+        .category {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        section { padding: 40px 0; }
+
+        h2 {
+            font-family: 'Teko', sans-serif;
+            font-size: 3rem;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            border-bottom: 4px solid var(--neon);
+            display: inline-block;
+        }
+
+        .route-card {
+            background: var(--gray);
+            padding: 30px;
+            margin-bottom: 20px;
+            border-left: 8px solid var(--neon);
+            transition: 0.3s;
+        }
+
+        .route-card:hover { background: #222; transform: scale(1.02); }
+
+        .method { font-weight: 900; color: var(--neon); margin-right: 15px; }
+        .path { font-family: monospace; font-size: 1.2rem; }
+        
+        .filters {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        footer {
+            padding: 100px 0;
+            text-align: center;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="category">Powering Your Studio</span>
+            <h1>Fitness Hub</h1>
+            <p style="margin-top:20px; font-weight:700;">API de alto desempenho para gestão de planos e modalidades.</p>
+        </header>
+
+        <section>
+            <h2>The Showcase</h2>
+            <div class="route-card">
+                <span class="method">GET</span> <span class="path">/api/plans</span>
+                <p>Retorna todos os planos de assinatura ativos.</p>
+                <p class="filters">Filtros: <code>name</code>, <code>type</code>, <code>priceMin</code>, <code>priceMax</code></p>
+            </div>
+            <div class="route-card">
+                <span class="method">GET</span> <span class="path">/api/modalities</span>
+                <p>Lista todas as modalidades de treino oferecidas.</p>
+                <p class="filters">Filtros: <code>name</code>, <code>level</code>, <code>status</code></p>
+            </div>
+        </section>
+
+        <section>
+            <h2>The Core (Admin)</h2>
+            <div class="route-card">
+                <span class="method">POST / PUT / DELETE</span> <span class="path">/api/admin/[plans|modalities]</span>
+                <p>Controle total sobre o inventário da academia.</p>
+            </div>
+        </section>
+
+        <footer>
+            NO PAIN NO GAIN // FITNESS HUB API 2026
+        </footer>
+    </div>
+</body>
+</html>

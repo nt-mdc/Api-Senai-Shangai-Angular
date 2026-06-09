@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTech - API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #0f172a;
+            --accent: #10b981;
+            --bg: #0b0f1a;
+            --text: #e2e8f0;
+            --card-bg: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        header {
+            padding: 80px 40px;
+            background: radial-gradient(circle at top right, #312e81, transparent), var(--card-bg);
+            border-radius: 24px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h1 { font-size: 4rem; font-weight: 700; margin-bottom: 8px; color: #fff; letter-spacing: -2px; }
+        .tagline { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 1.1rem; }
+
+        section {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        h2 { font-size: 1.8rem; margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        h2::after { content: ""; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+
+        .api-block {
+            background: #000;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .method { padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; margin-right: 12px; }
+        .get { background: #3b82f6; color: #fff; }
+        .post { background: #10b981; color: #fff; }
+        .put { background: #f59e0b; color: #fff; }
+        .delete { background: #ef4444; color: #fff; }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .param-table th { text-align: left; padding: 12px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; }
+        .param-table td { padding: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        .code-snippet { color: var(--accent); }
+
+        footer { text-align: center; padding: 60px; opacity: 0.5; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <p class="tagline">/api/courses</p>
+            <h1>EduTech</h1>
+            <p>Plataforma de gestão de cursos e trilhas de aprendizado digital.</p>
+        </header>
+
+        <section>
+            <h2>Exploração Pública</h2>
+            <div class="api-block">
+                <span class="method get">GET</span> <span class="code-snippet">/api/courses</span>
+                <p style="margin-top:15px; font-size:0.9rem; color:#94a3b8;">Retorna a lista de cursos disponíveis com filtros inteligentes.</p>
+                <table class="param-table">
+                    <tr><th>Query Param</th><th>Regra</th></tr>
+                    <tr><td><code>title</code></td><td>Busca parcial no título</td></tr>
+                    <tr><td><code>instructor</code></td><td>Busca parcial pelo nome do instrutor</td></tr>
+                    <tr><td><code>category</code></td><td>Match exato (Programação, Design, Marketing...)</td></tr>
+                </table>
+            </div>
+            
+            <div class="api-block">
+                <span class="method get">GET</span> <span class="code-snippet">/api/courses/:id</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>Gestão de Conteúdo (Admin)</h2>
+            <p style="margin-bottom:20px; color:#94a3b8;">Necessária autenticação via Token JWT.</p>
+            
+            <div class="api-block">
+                <span class="method post">POST</span> <span class="code-snippet">/api/admin/courses</span>
+            </div>
+            <div class="api-block">
+                <span class="method put">PUT</span> <span class="code-snippet">/api/admin/courses/:id</span>
+            </div>
+            <div class="api-block">
+                <span class="method delete">DELETE</span> <span class="code-snippet">/api/admin/courses/:id</span>
+            </div>
+        </section>
+
+        <footer>
+            Built with integrity for Shanghai Expedition Learning Paths.
+        </footer>
+    </div>
+</body>
+</html>

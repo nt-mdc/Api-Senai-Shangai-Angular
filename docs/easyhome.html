@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyHome - API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c5a059;
+            --dark: #1a1a1a;
+            --light: #f4f4f4;
+            --text: #333;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.8;
+            padding: 40px;
+        }
+
+        .wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 80px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.05);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 60px;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            color: var(--dark);
+            font-style: italic;
+            margin-bottom: 0;
+            line-height: 1;
+        }
+
+        .prefix {
+            font-weight: 500;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        section { margin-bottom: 60px; }
+
+        h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            color: var(--dark);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h2::after {
+            content: "";
+            display: block;
+            width: 40px;
+            height: 2px;
+            background: var(--gold);
+            margin-top: 10px;
+        }
+
+        .route {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .endpoint {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .method {
+            color: var(--gold);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-right: 15px;
+        }
+
+        .desc { font-size: 0.95rem; color: #666; }
+
+        .specs {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .specs code { color: var(--gold); }
+
+        footer {
+            margin-top: 100px;
+            text-align: center;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <span class="prefix">Real Estate API</span>
+            <h1>EasyHome</h1>
+            <p style="margin-top:20px; font-weight:300;">Gestão sofisticada para o portfólio imobiliário moderno.</p>
+        </header>
+
+        <section>
+            <h2>Exploração</h2>
+            <div class="route">
+                <span class="endpoint"><span class="method">Get</span> /api/properties</span>
+                <p class="desc">Acesso completo ao catálogo de imóveis ativos.</p>
+                <p class="specs">Filtros disponíveis: <code>address</code>, <code>type</code> (Casa, Apartamento, Terreno), <code>modality</code> (Venda, Aluguel).</p>
+            </div>
+            <div class="route">
+                <span class="endpoint"><span class="method">Get</span> /api/properties/:id</span>
+                <p class="desc">Detalhes técnicos e descrições luxuosas de um imóvel específico.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Curadoria</h2>
+            <div class="route">
+                <span class="endpoint"><span class="method">Post</span> /api/admin/properties</span>
+                <p class="desc">Inserção de novas unidades no sistema.</p>
+            </div>
+            <div class="route">
+                <span class="endpoint"><span class="method">Put</span> /api/admin/properties/:id</span>
+                <p class="desc">Atualização de metragens, preços ou status de disponibilidade.</p>
+            </div>
+        </section>
+
+        <footer>
+            EasyHome Excellence in Property Management
+        </footer>
+    </div>
+</body>
+</html>

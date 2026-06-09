@@ -10,6 +10,12 @@ const modalityRoutes = require('./modalities')
 const eventRoutes = require('./events')
 const adminRoutes = require('./admin')
 
+const modaRoutes = require('./modaRoutes')
+const streamingRoutes = require('./streamingRoutes')
+const receitasRoutes = require('./receitasRoutes')
+const eventosProjRoutes = require('./eventosRoutes')
+const hardwareRoutes = require('./hardwareRoutes')
+
 const router = Router()
 
 router.use('/auth', authRoutes)
@@ -22,5 +28,11 @@ router.use('/plans', planRoutes)
 router.use('/modalities', modalityRoutes)
 router.use('/events', eventRoutes)
 router.use('/admin', adminRoutes)
+
+router.use('/moda', modaRoutes)
+router.use('/streaming', streamingRoutes)
+router.use('/receitas', receitasRoutes)
+router.use('/projetos-eventos', eventosProjRoutes)
+router.use('/hardware', hardwareRoutes)
 
 module.exports = router

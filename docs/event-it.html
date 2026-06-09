@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event-IT - API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Uncut+Sans:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8B5CF6;
+            --secondary: #EC4899;
+            --bg: #F8FAFC;
+            --text: #1E293B;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Uncut Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            min-height: 100vh;
+        }
+
+        aside {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        aside h1 { font-size: 4rem; font-weight: 700; line-height: 0.9; margin-bottom: 20px; }
+        aside p { font-size: 1.1rem; opacity: 0.9; }
+
+        main { padding: 80px; overflow-y: auto; }
+
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--primary);
+            margin-bottom: 40px;
+            display: block;
+            font-weight: 700;
+        }
+
+        .api-item {
+            margin-bottom:60px;
+        }
+
+        .endpoint-badge {
+            font-family: 'IBM Plex Mono', monospace;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+
+        .method { color: var(--primary); font-weight: 700; }
+
+        .details { font-size: 1rem; color: #64748b; max-width: 600px; }
+
+        .filter-chip {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #E2E8F0;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-top: 10px;
+        }
+
+        footer { margin-top: 100px; font-size: 0.8rem; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside>
+            <h1>Event-it</h1>
+            <p>Conectando ideias, pessoas e o futuro em um só lugar.</p>
+        </aside>
+        <main>
+            <div class="api-item">
+                <span class="section-title">Acesso Público</span>
+                <div class="endpoint-badge">
+                    <span class="method">GET</span> <span>/api/events</span>
+                </div>
+                <p class="details">Recupera a agenda completa de eventos sincronizada. Suporta filtros de busca em tempo real.</p>
+                <div>
+                    <span class="filter-chip">NAME</span>
+                    <span class="filter-chip">CATEGORY</span>
+                    <span class="filter-chip">DATE</span>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <div class="endpoint-badge">
+                    <span class="method">GET</span> <span>/api/events/:id</span>
+                </div>
+                <p class="details">Retorna especificações técnicas, localidade e status de vagas do evento.</p>
+            </div>
+
+            <div class="api-item">
+                <span class="section-title">Gerenciamento Organizador</span>
+                <div class="endpoint-badge">
+                    <span class="method">POST</span> <span>/api/admin/events</span>
+                </div>
+                <p class="details">Criação de novos eventos com validação de janelas temporais (impedimento de datas retroativas).</p>
+            </div>
+
+            <div class="api-item">
+                <div class="endpoint-badge">
+                    <span class="method">PUT / DELETE</span> <span>/api/admin/events/:id</span>
+                </div>
+            </div>
+
+            <footer>
+                &copy; 2026 Event-IT API Documentation — Built for Shanghai Expedition
+            </footer>
+        </main>
+    </div>
+</body>
+</html>

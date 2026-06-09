@@ -445,6 +445,150 @@ npx prisma db seed
 
 ---
 
+### 👗 Moda — `/api/moda` (público)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/moda` | Listar todos os itens de moda |
+| `POST` | `/api/moda` | Criar novo item de moda (suporta upload de `imagem`) |
+
+**Body (POST - form-data):**
+- `nome` (string)
+- `categoria` (string: "Roupas" | "Perfumes" | "Bolsas" | "Joias")
+- `preco` (number)
+- `tag` (string, opcional)
+- `imagem` (file, upload)
+
+**Response (POST de Sucesso - 201):**
+```json
+{
+  "id": "uuid-aqui",
+  "nome": "Camiseta",
+  "categoria": "Roupas",
+  "preco": 49.9,
+  "tag": "Básico",
+  "imagem_url": "https://public.blob.vercel-storage.com/imagem.jpg"
+}
+```
+
+---
+
+### 🎬 Streaming — `/api/streaming` (público)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/streaming/movies` | Listar todos os filmes |
+| `POST` | `/api/streaming/movies` | Criar novo filme (suporta upload de `imagem`) |
+| `POST` | `/api/streaming/stats` | Salvar novas estatísticas |
+
+**Body (POST `/movies` - form-data):**
+- `titulo` (string)
+- `genero` (string)
+- `ano_lancamento` (integer)
+- `nota` (string)
+- `imagem` (file, upload)
+
+**Response (POST `/movies` Sucesso - 201):**
+```json
+{
+  "id": "uuid-aqui",
+  "titulo": "Filme Legal",
+  "genero": "Ação",
+  "ano_lancamento": 2024,
+  "nota": "8.5",
+  "imagem_url": "https://public.blob.vercel-storage.com/movie.jpg"
+}
+```
+
+---
+
+### 🍳 Receitas — `/api/receitas` (público)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/receitas` | Listar todas as receitas |
+| `POST` | `/api/receitas` | Criar nova receita (suporta upload de `imagem`) |
+
+**Body (POST - form-data):**
+- `categoria` (string)
+- `titulo` (string)
+- `ingredientes_principais` (JSON array de strings)
+- `tempo_preparo` (string)
+- `dificuldade` (string: "Fácil" | "Médio" | "Difícil")
+- `imagem` (file, upload)
+
+**Response (POST Sucesso - 201):**
+```json
+{
+  "id": "uuid-aqui",
+  "categoria": "Massas",
+  "titulo": "Macarrão",
+  "ingredientes_principais": ["Macarrão", "Molho"],
+  "tempo_preparo": "20 min",
+  "dificuldade": "Fácil",
+  "imagem_url": "https://public.blob.vercel-storage.com/receita.jpg"
+}
+```
+
+---
+
+### 🎟️ Projetos Eventos — `/api/projetos-eventos` (público)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/projetos-eventos/events` | Listar eventos (Novo projeto) |
+| `POST` | `/api/projetos-eventos/events` | Criar evento (suporta upload de `imagem`) |
+| `POST` | `/api/projetos-eventos/dashboard` | Criar métricas do dashboard |
+
+**Body (POST `/events` - form-data):**
+- `nome` (string)
+- `data` (string)
+- `local` (string)
+- `ingressos_restantes` (integer)
+- `imagem` (file, upload)
+
+**Response (POST `/events` Sucesso - 201):**
+```json
+{
+  "id": "uuid-aqui",
+  "nome": "Show",
+  "data": "2024-10-10",
+  "local": "Arena",
+  "ingressos_restantes": 100,
+  "imagem_url": "https://public.blob.vercel-storage.com/evento.jpg"
+}
+```
+
+---
+
+### 💻 Hardware — `/api/hardware` (público)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/hardware` | Listar itens de hardware |
+| `POST` | `/api/hardware` | Criar item de hardware (suporta upload de `imagem`) |
+
+**Body (POST - form-data):**
+- `tipo` (string)
+- `fabricante` (string)
+- `especificacao_principal` (string)
+- `preco` (number)
+- `imagem` (file, upload)
+
+**Response (POST Sucesso - 201):**
+```json
+{
+  "id": "uuid-aqui",
+  "tipo": "Placa de Vídeo",
+  "fabricante": "NVIDIA",
+  "especificacao_principal": "16GB",
+  "preco": 4500.0,
+  "imagem_url": "https://public.blob.vercel-storage.com/gpu.jpg"
+}
+```
+
+---
+
 ## 📂 Project Structure
 
 ```

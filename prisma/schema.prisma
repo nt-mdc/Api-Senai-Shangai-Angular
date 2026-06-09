@@ -164,3 +164,69 @@ model Event {
 
   author User @relation(fields: [created_by], references: [id])
 }
+
+// ─── 5 NOVOS PROJETOS ────────────────────────────────────────────────────────
+
+// 1. MODA
+model ModaItem {
+  id         String  @id @default(uuid())
+  nome       String
+  categoria  String
+  preco      Float
+  imagem_url String
+  tag        String?
+}
+
+// 2. STREAMING
+model Movie {
+  id             String @id @default(uuid())
+  titulo         String
+  genero         String
+  ano_lancamento Int
+  nota           String
+  imagem_url     String
+}
+
+model StreamingStats {
+  id                     String   @id @default(uuid())
+  mais_assistidos_semana String[]
+  total_horas_assistidas String
+}
+
+// 3. RECEITAS
+model Recipe {
+  id                      String   @id @default(uuid())
+  categoria               String
+  titulo                  String
+  ingredientes_principais String[]
+  tempo_preparo           String
+  dificuldade             String
+  imagem_url              String
+}
+
+// 4. EVENTOS (Nomeado como EventProject e EventDashboard para evitar conflito com Event)
+model EventProject {
+  id                  String @id @default(uuid())
+  nome                String
+  data                String
+  local               String
+  ingressos_restantes Int
+  imagem_url          String
+}
+
+model EventDashboard {
+  id                    String @id @default(uuid())
+  total_eventos         Int
+  eventos_proximos      Int
+  ingressos_disponiveis Int
+}
+
+// 5. HARDWARE
+model HardwareItem {
+  id                      String @id @default(uuid())
+  tipo                    String
+  fabricante              String
+  especificacao_principal String
+  preco                   Float
+  imagem_url              String
+}
