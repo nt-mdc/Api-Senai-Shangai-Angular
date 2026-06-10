@@ -173,6 +173,7 @@ model ModaItem {
   nome       String
   categoria  String
   preco      Float
+  descricao  String  @db.Text
   imagem_url String
   tag        String?
 }
@@ -221,9 +222,21 @@ model EventDashboard {
   ingressos_disponiveis Int
 }
 
-// 5. HARDWARE
+// 6. ARTIGOS
+model Artigo {
+  id               String   @id @default(uuid())
+  titulo           String
+  descricao        String   @db.Text
+  categoria        String
+  tempo_leitura    Int
+  imagem           String?
+  data_publicacao  DateTime
+}
+
+// 5. HARDWARE (original — mantido por ordem histórica)
 model HardwareItem {
   id                      String @id @default(uuid())
+  titulo                  String
   tipo                    String
   fabricante              String
   especificacao_principal String

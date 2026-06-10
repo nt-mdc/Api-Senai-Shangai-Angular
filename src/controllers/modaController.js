@@ -3,7 +3,10 @@ const { put } = require('@vercel/blob');
 
 exports.create = async (req, res, next) => {
   try {
-    const { nome, categoria, preco, tag } = req.body;
+    const { nome, categoria, preco, descricao, tag } = req.body;
+    if (!nome || !categoria || preco === undefined || !descricao) {
+      return res.status(400).json({ error: 'Nome, categoria, preço e descrição são obrigatórios' });
+    }
     let imagem_url = '';
     if (req.file) {
       const blob = await put(req.file.originalname, req.file.buffer, { access: 'public' });
@@ -14,6 +17,7 @@ exports.create = async (req, res, next) => {
         nome,
         categoria,
         preco: parseFloat(preco),
+        descricao,
         tag: tag || null,
         imagem_url
       }

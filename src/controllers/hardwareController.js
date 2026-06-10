@@ -3,7 +3,10 @@ const { put } = require('@vercel/blob');
 
 exports.create = async (req, res, next) => {
   try {
-    const { tipo, fabricante, especificacao_principal, preco } = req.body;
+    const { titulo, tipo, fabricante, especificacao_principal, preco } = req.body;
+    if (!titulo || !tipo || !fabricante || !especificacao_principal || preco === undefined) {
+      return res.status(400).json({ error: 'Título, tipo, fabricante, especificação principal e preço são obrigatórios' });
+    }
     let imagem_url = '';
     if (req.file) {
       const blob = await put(req.file.originalname, req.file.buffer, { access: 'public' });
@@ -11,6 +14,7 @@ exports.create = async (req, res, next) => {
     }
     const hw = await prisma.hardwareItem.create({
       data: {
+        titulo,
         tipo,
         fabricante,
         especificacao_principal,

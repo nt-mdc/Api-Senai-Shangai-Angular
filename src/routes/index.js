@@ -15,6 +15,7 @@ const streamingRoutes = require('./streamingRoutes')
 const receitasRoutes = require('./receitasRoutes')
 const eventosProjRoutes = require('./eventosRoutes')
 const hardwareRoutes = require('./hardwareRoutes')
+const artigosRoutes = require('./artigosRoutes')
 
 const router = Router()
 
@@ -34,5 +35,6 @@ router.use('/streaming', streamingRoutes)
 router.use('/receitas', receitasRoutes)
 router.use('/projetos-eventos', eventosProjRoutes)
 router.use('/hardware', hardwareRoutes)
+router.use('/artigos', artigosRoutes)
 
 module.exports = router
