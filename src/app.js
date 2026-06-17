@@ -1,13 +1,22 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
+const swaggerUi = require('swagger-ui-express')
 const routes = require('./routes')
+const swaggerSpec = require('./config/swagger')
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: 'API SENAI — Documentação',
+  swaggerOptions: { persistAuthorization: true }
+}))
+app.get('/api/docs.json', (req, res) => res.json(swaggerSpec))
+
 app.use('/api', routes)
 
 // Global error handler
