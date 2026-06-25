@@ -290,6 +290,16 @@ const swaggerSpec = {
         }
       },
 
+      HardwareVideo: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          url: { type: 'string', example: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+          titulo: { type: 'string', example: 'Análise Completa RTX 4070' },
+          descricao: { type: 'string', example: 'Uma análise aprofundada sobre o desempenho e consumo da nova RTX 4070.' }
+        }
+      },
+
       Artigo: {
         type: 'object',
         properties: {
@@ -849,6 +859,104 @@ const swaggerSpec = {
       get: { tags: ['Hardware'], summary: 'Detalhe de item de hardware', parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], responses: { 200: { description: 'OK', content: { 'application/json': { schema: { $ref: '#/components/schemas/HardwareItem' } } } } } },
       put: { tags: ['Hardware'], summary: 'Atualizar item de hardware', security: [{ bearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { titulo: { type: 'string' }, tipo: { type: 'string' }, fabricante: { type: 'string' }, especificacao_principal: { type: 'string' }, preco: { type: 'number' }, imagem: { type: 'string', format: 'binary' } } } } } }, responses: { 200: { description: 'Atualizado' } } },
       delete: { tags: ['Hardware'], summary: 'Remover item de hardware', security: [{ bearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], responses: { 204: { $ref: '#/components/responses/NoContent' } } }
+    },
+    '/hardware/videos': {
+      get: {
+        tags: ['Hardware'],
+        summary: 'Listar vídeos de hardware',
+        responses: {
+          200: {
+            description: 'OK',
+            content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/HardwareVideo' } } } }
+          }
+        }
+      },
+      post: {
+        tags: ['Hardware'],
+        summary: 'Criar vídeo de hardware',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['url', 'titulo', 'descricao'],
+                properties: {
+                  url: { type: 'string', example: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+                  titulo: { type: 'string', example: 'Análise Completa RTX 4070' },
+                  descricao: { type: 'string', example: 'Uma análise aprofundada sobre o desempenho e consumo da nova RTX 4070.' }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: 'Criado',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/HardwareVideo' } } }
+          },
+          400: { $ref: '#/components/responses/BadRequest' },
+          401: { $ref: '#/components/responses/Unauthorized' },
+          403: { $ref: '#/components/responses/Forbidden' }
+        }
+      }
+    },
+    '/hardware/videos/{id}': {
+      get: {
+        tags: ['Hardware'],
+        summary: 'Detalhe de vídeo de hardware',
+        parameters: [{ $ref: '#/components/parameters/IdUuidPath' }],
+        responses: {
+          200: {
+            description: 'OK',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/HardwareVideo' } } },
+          },
+          404: { $ref: '#/components/responses/NotFound' }
+        }
+      },
+      put: {
+        tags: ['Hardware'],
+        summary: 'Atualizar vídeo de hardware',
+        security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdUuidPath' }],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  url: { type: 'string' },
+                  titulo: { type: 'string' },
+                  descricao: { type: 'string' }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'Atualizado',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/HardwareVideo' } } }
+          },
+          400: { $ref: '#/components/responses/BadRequest' },
+          401: { $ref: '#/components/responses/Unauthorized' },
+          403: { $ref: '#/components/responses/Forbidden' },
+          404: { $ref: '#/components/responses/NotFound' }
+        }
+      },
+      delete: {
+        tags: ['Hardware'],
+        summary: 'Remover vídeo de hardware',
+        security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdUuidPath' }],
+        responses: {
+          204: { $ref: '#/components/responses/NoContent' },
+          401: { $ref: '#/components/responses/Unauthorized' },
+          403: { $ref: '#/components/responses/Forbidden' },
+          404: { $ref: '#/components/responses/NotFound' }
+        }
+      }
     },
 
     // ─── ARTIGOS ───────────────────────────────────────────────────────────
