@@ -17,6 +17,14 @@ const eventosProjRoutes = require('./eventosRoutes')
 const hardwareRoutes = require('./hardwareRoutes')
 const artigosRoutes = require('./artigosRoutes')
 
+// Projetos novos (spec) — cada arquivo agrupa os recursos do projeto.
+const dentroDoJogoRoutes = require('./dentroDoJogo.routes')
+const pitocosCarRoutes = require('./pitocosCar.routes')
+const lumiereRoutes = require('./lumiere.routes')
+const nexusRoutes = require('./nexus.routes')
+const maxblockRoutes = require('./maxblock.routes')
+const swellPointRoutes = require('./swellPoint.routes')
+
 const router = Router()
 
 router.use('/auth', authRoutes)
@@ -36,5 +44,12 @@ router.use('/receitas', receitasRoutes)
 router.use('/projetos-eventos', eventosProjRoutes)
 router.use('/hardware', hardwareRoutes)
 router.use('/artigos', artigosRoutes)
+
+router.use('/dentro-do-jogo', dentroDoJogoRoutes)
+router.use('/pitocos-car', pitocosCarRoutes)
+router.use('/lumiere', lumiereRoutes)
+router.use('/nexus', nexusRoutes)
+router.use('/maxblock', maxblockRoutes)
+router.use('/swell-point', swellPointRoutes)
 
 module.exports = router

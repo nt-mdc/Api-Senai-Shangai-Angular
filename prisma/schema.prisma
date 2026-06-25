@@ -251,59 +251,328 @@ model HardwareVideo {
   descricao String @db.Text
 }
 
-// ─── Dentro do Jogo — Portal Copa do Mundo FIFA 2026 ─────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+// PROJETO 1 — Dentro do Jogo (Portal Copa do Mundo FIFA 2026)  /api/dentro-do-jogo
+// ═════════════════════════════════════════════════════════════════════════════
 
 model Group {
-  id          String  @id @default(uuid())
+  id          Int      @id @default(autoincrement())
   name        String
   description String?
-  image       String? // URL pública (Vercel Blob)
-
-  teams Team[]
+  image       String?
+  teams       Team[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Team {
-  id            Int     @id @default(autoincrement())
-  name          String
-  country_code  String
-  group_id      String?
-  wins          Int     @default(0)
-  losses        Int     @default(0)
-  draws         Int     @default(0)
-  points        Int     @default(0)
-  goals_for     Int     @default(0)
-  goals_against Int     @default(0)
-  image         String? // URL pública (Vercel Blob)
-
-  group        Group?  @relation(fields: [group_id], references: [id], onDelete: SetNull)
-  home_matches Match[] @relation("HomeTeam")
-  away_matches Match[] @relation("AwayTeam")
+  id           Int      @id @default(autoincrement())
+  name         String
+  countryCode  String
+  groupId      Int
+  group        Group    @relation(fields: [groupId], references: [id])
+  wins         Int      @default(0)
+  losses       Int      @default(0)
+  draws        Int      @default(0)
+  points       Int      @default(0)
+  goalsFor     Int      @default(0)
+  goalsAgainst Int      @default(0)
+  image        String?
+  homeMatches  Match[]  @relation("HomeTeam")
+  awayMatches  Match[]  @relation("AwayTeam")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Match {
-  id           Int      @id @default(autoincrement())
-  home_team_id Int
-  away_team_id Int
-  home_score   Int?
-  away_score   Int?
-  match_date   DateTime
-  stadium      String
-  city         String
-  stage        String
-  status       String   @default("Agendado")
-  image        String? // URL pública (Vercel Blob)
-
-  home_team Team @relation("HomeTeam", fields: [home_team_id], references: [id])
-  away_team Team @relation("AwayTeam", fields: [away_team_id], references: [id])
+  id         Int      @id @default(autoincrement())
+  homeTeamId Int
+  awayTeamId Int
+  homeTeam   Team     @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam   Team     @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  homeScore  Int?
+  awayScore  Int?
+  matchDate  DateTime
+  stadium    String
+  city       String
+  stage      String
+  status     String   @default("Agendado")
+  image      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model News {
-  id           String   @id @default(uuid())
-  title        String
-  content      String   @db.Text
-  summary      String
-  author       String
-  published_at DateTime
-  category     String
-  image        String? // URL pública (Vercel Blob)
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String   @db.Text
+  summary     String
+  author      String
+  publishedAt DateTime
+  category    String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROJETO 2 — Pitoco's Car (eventos de carros)            /api/pitocos-car
+// ═════════════════════════════════════════════════════════════════════════════
+
+model CarEvent {
+  id                Int                   @id @default(autoincrement())
+  title             String
+  organizerName     String
+  organizerBio      String
+  organizerPhoto    String?
+  eventDate         DateTime
+  description       String
+  vehicleLimit      Int
+  ticketPrice       Decimal?
+  ticketDescription String?
+  image             String?
+  registrations     VehicleRegistration[]
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+}
+
+model VehicleRegistration {
+  id                 Int      @id @default(autoincrement())
+  eventId            Int
+  event              CarEvent @relation(fields: [eventId], references: [id])
+  ownerName          String
+  ownerEmail         String
+  vehicleName        String
+  vehicleYear        Int
+  vehicleDescription String
+  status             String   @default("Pendente")
+  image              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROJETO 3 — Lumière (loja de roupas)                    /api/lumiere
+// ═════════════════════════════════════════════════════════════════════════════
+
+model ClothingCategory {
+  id          Int               @id @default(autoincrement())
+  name        String
+  description String?
+  image       String?
+  products    ClothingProduct[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model ClothingProduct {
+  id            Int              @id @default(autoincrement())
+  name          String
+  description   String?
+  price         Decimal
+  categoryId    Int
+  category      ClothingCategory @relation(fields: [categoryId], references: [id])
+  image         String?
+  stockEntries  ClothingStock[]
+  purchaseItems PurchaseItem[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model ClothingSize {
+  id            Int             @id @default(autoincrement())
+  label         String          @unique
+  image         String?
+  stockEntries  ClothingStock[]
+  purchaseItems PurchaseItem[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model ClothingStock {
+  id        Int             @id @default(autoincrement())
+  productId Int
+  sizeId    Int
+  product   ClothingProduct @relation(fields: [productId], references: [id])
+  size      ClothingSize    @relation(fields: [sizeId], references: [id])
+  quantity  Int             @default(0)
+  image     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@unique([productId, sizeId])
+}
+
+model Purchase {
+  id            Int            @id @default(autoincrement())
+  customerName  String
+  customerEmail String
+  total         Decimal
+  status        String         @default("Pendente")
+  image         String?
+  items         PurchaseItem[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model PurchaseItem {
+  id         Int             @id @default(autoincrement())
+  purchaseId Int
+  productId  Int
+  sizeId     Int
+  purchase   Purchase        @relation(fields: [purchaseId], references: [id])
+  product    ClothingProduct @relation(fields: [productId], references: [id])
+  size       ClothingSize    @relation(fields: [sizeId], references: [id])
+  quantity   Int
+  unitPrice  Decimal
+  image      String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROJETO 4 — Nexus (loja de eletrônicos)                 /api/nexus
+// ═════════════════════════════════════════════════════════════════════════════
+
+model ElectronicCategory {
+  id          Int                 @id @default(autoincrement())
+  name        String
+  description String?
+  image       String?
+  products    ElectronicProduct[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model ElectronicProduct {
+  id                Int                @id @default(autoincrement())
+  name              String
+  categoryId        Int
+  category          ElectronicCategory @relation(fields: [categoryId], references: [id])
+  brand             String
+  description       String
+  price             Decimal
+  stockQuantity     Int                @default(0)
+  lowStockThreshold Int                @default(5)
+  sku               String             @unique
+  image             String?
+  orderItems        OrderItem[]
+  cartItems         CartItem[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model Customer {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  phone     String?
+  address   String?
+  role      String     @default("customer")
+  image     String?
+  orders    Order[]
+  cartItems CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  customerId Int
+  customer   Customer    @relation(fields: [customerId], references: [id])
+  total      Decimal
+  status     String      @default("Pendente")
+  image      String?
+  items      OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        Int               @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  order     Order             @relation(fields: [orderId], references: [id])
+  product   ElectronicProduct @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Decimal
+  image     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model CartItem {
+  id         Int               @id @default(autoincrement())
+  customerId Int
+  productId  Int
+  customer   Customer          @relation(fields: [customerId], references: [id])
+  product    ElectronicProduct @relation(fields: [productId], references: [id])
+  quantity   Int
+  image      String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  @@unique([customerId, productId])
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROJETO 5 — Maxblock (catálogo de jogos)                /api/maxblock
+// ═════════════════════════════════════════════════════════════════════════════
+
+model GameCategory {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  image     String?
+  games     Game[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Game {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String
+  categoryId  Int
+  category    GameCategory @relation(fields: [categoryId], references: [id])
+  ageRating   String
+  controls    String
+  likesCount  Int          @default(0)
+  gameUrl     String
+  image       String?
+  likes       GameLike[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model GameLike {
+  id             Int      @id @default(autoincrement())
+  gameId         Int
+  game           Game     @relation(fields: [gameId], references: [id])
+  userIdentifier String
+  createdAt      DateTime @default(now())
+
+  @@unique([gameId, userIdentifier])
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROJETO 6 — Swell Point (praias e eventos de surf)      /api/swell-point
+// ═════════════════════════════════════════════════════════════════════════════
+
+model Beach {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SurfEvent {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

@@ -45,7 +45,11 @@ const swaggerSpec = {
     { name: 'Receitas', description: 'Receitas culinárias' },
     { name: 'Projetos-Eventos', description: 'Eventos e dashboard (projeto novo)' },
     { name: 'Hardware', description: 'Itens de hardware' },
-    { name: 'Artigos', description: 'Artigos / blog' }
+    { name: 'Artigos', description: 'Artigos / blog' },
+    { name: 'Groups', description: 'Dentro do Jogo — grupos da Copa 2026' },
+    { name: 'Teams', description: 'Dentro do Jogo — seleções da Copa 2026' },
+    { name: 'Matches', description: 'Dentro do Jogo — partidas da Copa 2026' },
+    { name: 'News', description: 'Dentro do Jogo — notícias da Copa 2026' }
   ],
 
   components: {
@@ -296,6 +300,78 @@ const swaggerSpec = {
           tempo_leitura: { type: 'integer', example: 8 },
           imagem: { type: 'string', nullable: true },
           data_publicacao: { type: 'string', format: 'date-time' }
+        }
+      },
+
+      Team: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer', example: 1 },
+          name: { type: 'string', example: 'Brasil' },
+          country_code: { type: 'string', example: 'BRA' },
+          group_id: { type: 'string', format: 'uuid', nullable: true },
+          wins: { type: 'integer', example: 2 },
+          losses: { type: 'integer', example: 0 },
+          draws: { type: 'integer', example: 1 },
+          points: { type: 'integer', example: 7 },
+          goals_for: { type: 'integer', example: 6 },
+          goals_against: { type: 'integer', example: 2 },
+          goal_difference: { type: 'integer', example: 4, description: 'Calculado: goals_for - goals_against' },
+          image_url: { type: 'string', nullable: true, example: 'https://blob.vercel-storage.com/teams/...' }
+        }
+      },
+
+      Group: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          name: { type: 'string', example: 'Grupo A' },
+          description: { type: 'string', nullable: true },
+          image_url: { type: 'string', nullable: true },
+          teams: { type: 'array', items: { $ref: '#/components/schemas/Team' } }
+        }
+      },
+
+      Match: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer', example: 1 },
+          home_team_id: { type: 'integer', example: 1 },
+          away_team_id: { type: 'integer', example: 2 },
+          home_score: { type: 'integer', nullable: true, example: 3 },
+          away_score: { type: 'integer', nullable: true, example: 1 },
+          match_date: { type: 'string', format: 'date-time' },
+          stadium: { type: 'string', example: 'Estádio Azteca' },
+          city: { type: 'string', example: 'Cidade do México' },
+          stage: { type: 'string', enum: ['Fase de Grupos', 'Oitavas', 'Quartas', 'Semifinal', 'Final'] },
+          status: { type: 'string', enum: ['Agendado', 'Em andamento', 'Encerrado'], example: 'Encerrado' },
+          image_url: { type: 'string', nullable: true },
+          home_team: { $ref: '#/components/schemas/Team' },
+          away_team: { $ref: '#/components/schemas/Team' }
+        }
+      },
+
+      News: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          title: { type: 'string', example: 'Brasil vence na estreia' },
+          content: { type: 'string' },
+          summary: { type: 'string', example: 'Seleção brasileira começa bem a Copa.' },
+          author: { type: 'string', example: 'Redação Dentro do Jogo' },
+          published_at: { type: 'string', format: 'date-time' },
+          category: { type: 'string', enum: ['Resultados', 'Seleções', 'Jogadores', 'Curiosidades'] },
+          image_url: { type: 'string', nullable: true }
+        }
+      },
+
+      PaginationMeta: {
+        type: 'object',
+        properties: {
+          page: { type: 'integer', example: 1 },
+          per_page: { type: 'integer', example: 15 },
+          total: { type: 'integer', example: 42 },
+          total_pages: { type: 'integer', example: 3 }
         }
       }
     },
@@ -804,8 +880,256 @@ const swaggerSpec = {
       get: { tags: ['Artigos'], summary: 'Detalhe de artigo', parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], responses: { 200: { description: 'OK', content: { 'application/json': { schema: { $ref: '#/components/schemas/Artigo' } } } } } },
       put: { tags: ['Artigos'], summary: 'Atualizar artigo', security: [{ bearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { titulo: { type: 'string' }, descricao: { type: 'string' }, categoria: { type: 'string' }, tempo_leitura: { type: 'integer' }, data_publicacao: { type: 'string', format: 'date-time' }, imagem: { type: 'string', format: 'binary' } } } } } }, responses: { 200: { description: 'Atualizado' } } },
       delete: { tags: ['Artigos'], summary: 'Remover artigo', security: [{ bearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], responses: { 204: { $ref: '#/components/responses/NoContent' } } }
+    },
+
+    // ─── GROUPS (Copa 2026) ────────────────────────────────────────────────
+    '/groups': {
+      get: {
+        tags: ['Groups'],
+        summary: 'Listar grupos (com suas seleções)',
+        parameters: [
+          { name: 'page', in: 'query', schema: { type: 'integer', default: 1 } },
+          { name: 'per_page', in: 'query', schema: { type: 'integer', default: 15 } }
+        ],
+        responses: {
+          200: {
+            description: 'OK',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: { type: 'array', items: { $ref: '#/components/schemas/Group' } },
+                    meta: { $ref: '#/components/schemas/PaginationMeta' }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      post: {
+        tags: ['Groups'], summary: 'Criar grupo', security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['name'],
+                properties: {
+                  name: { type: 'string' },
+                  description: { type: 'string' },
+                  image: { type: 'string', format: 'binary', description: 'jpg/png/webp, máx 2MB' }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: { description: 'Criado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Group' } } } },
+          400: { $ref: '#/components/responses/BadRequest' },
+          401: { $ref: '#/components/responses/Unauthorized' },
+          403: { $ref: '#/components/responses/Forbidden' }
+        }
+      }
+    },
+    '/groups/{id}': {
+      get: { tags: ['Groups'], summary: 'Grupo por ID (com seleções)', parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], responses: { 200: { description: 'OK', content: { 'application/json': { schema: { $ref: '#/components/schemas/Group' } } } }, 404: { $ref: '#/components/responses/NotFound' } } },
+      put: {
+        tags: ['Groups'], summary: 'Atualizar grupo', security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdUuidPath' }],
+        requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } },
+        responses: { 200: { description: 'Atualizado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Group' } } } }, 404: { $ref: '#/components/responses/NotFound' } }
+      },
+      patch: {
+        tags: ['Groups'], summary: 'Atualizar grupo parcialmente', security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdUuidPath' }],
+        requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } },
+        responses: { 200: { description: 'Atualizado' }, 404: { $ref: '#/components/responses/NotFound' } }
+      },
+      delete: { tags: ['Groups'], summary: 'Remover grupo', security: [{ bearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], responses: { 204: { $ref: '#/components/responses/NoContent' }, 404: { $ref: '#/components/responses/NotFound' } } }
+    },
+
+    // ─── TEAMS (Copa 2026) ─────────────────────────────────────────────────
+    '/teams': {
+      get: {
+        tags: ['Teams'],
+        summary: 'Listar seleções',
+        parameters: [
+          { name: 'group_id', in: 'query', schema: { type: 'string', format: 'uuid' }, description: 'Filtrar por grupo' },
+          { name: 'page', in: 'query', schema: { type: 'integer', default: 1 } },
+          { name: 'per_page', in: 'query', schema: { type: 'integer', default: 15 } }
+        ],
+        responses: {
+          200: {
+            description: 'OK',
+            content: { 'application/json': { schema: { type: 'object', properties: { data: { type: 'array', items: { $ref: '#/components/schemas/Team' } }, meta: { $ref: '#/components/schemas/PaginationMeta' } } } } }
+          }
+        }
+      },
+      post: {
+        tags: ['Teams'], summary: 'Criar seleção', security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['name', 'country_code'],
+                properties: {
+                  name: { type: 'string' }, country_code: { type: 'string', example: 'BRA' },
+                  group_id: { type: 'string', format: 'uuid' },
+                  wins: { type: 'integer' }, losses: { type: 'integer' }, draws: { type: 'integer' },
+                  points: { type: 'integer' }, goals_for: { type: 'integer' }, goals_against: { type: 'integer' },
+                  image: { type: 'string', format: 'binary', description: 'jpg/png/webp, máx 2MB' }
+                }
+              }
+            }
+          }
+        },
+        responses: { 201: { description: 'Criado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Team' } } } }, 400: { $ref: '#/components/responses/BadRequest' }, 401: { $ref: '#/components/responses/Unauthorized' }, 403: { $ref: '#/components/responses/Forbidden' } }
+      }
+    },
+    '/teams/{id}': {
+      get: { tags: ['Teams'], summary: 'Seleção por ID', parameters: [{ $ref: '#/components/parameters/IdIntPath' }], responses: { 200: { description: 'OK', content: { 'application/json': { schema: { $ref: '#/components/schemas/Team' } } } }, 404: { $ref: '#/components/responses/NotFound' } } },
+      put: {
+        tags: ['Teams'], summary: 'Atualizar seleção', security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdIntPath' }],
+        requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, country_code: { type: 'string' }, group_id: { type: 'string' }, wins: { type: 'integer' }, losses: { type: 'integer' }, draws: { type: 'integer' }, points: { type: 'integer' }, goals_for: { type: 'integer' }, goals_against: { type: 'integer' }, image: { type: 'string', format: 'binary' } } } } } },
+        responses: { 200: { description: 'Atualizado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Team' } } } }, 404: { $ref: '#/components/responses/NotFound' } }
+      },
+      patch: {
+        tags: ['Teams'], summary: 'Atualizar seleção parcialmente', security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdIntPath' }],
+        requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, country_code: { type: 'string' }, group_id: { type: 'string' }, wins: { type: 'integer' }, losses: { type: 'integer' }, draws: { type: 'integer' }, points: { type: 'integer' }, goals_for: { type: 'integer' }, goals_against: { type: 'integer' }, image: { type: 'string', format: 'binary' } } } } } },
+        responses: { 200: { description: 'Atualizado' }, 404: { $ref: '#/components/responses/NotFound' } }
+      },
+      delete: { tags: ['Teams'], summary: 'Remover seleção', security: [{ bearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdIntPath' }], responses: { 204: { $ref: '#/components/responses/NoContent' }, 404: { $ref: '#/components/responses/NotFound' } } }
+    },
+
+    // ─── MATCHES (Copa 2026) ───────────────────────────────────────────────
+    '/matches': {
+      get: {
+        tags: ['Matches'],
+        summary: 'Listar partidas (com os dois times)',
+        parameters: [
+          { name: 'stage', in: 'query', schema: { type: 'string', enum: ['Fase de Grupos', 'Oitavas', 'Quartas', 'Semifinal', 'Final'] } },
+          { name: 'status', in: 'query', schema: { type: 'string', enum: ['Agendado', 'Em andamento', 'Encerrado'] } },
+          { name: 'team_id', in: 'query', schema: { type: 'integer' }, description: 'Partidas em que a seleção joga (casa ou fora)' },
+          { name: 'page', in: 'query', schema: { type: 'integer', default: 1 } },
+          { name: 'per_page', in: 'query', schema: { type: 'integer', default: 15 } }
+        ],
+        responses: { 200: { description: 'OK', content: { 'application/json': { schema: { type: 'object', properties: { data: { type: 'array', items: { $ref: '#/components/schemas/Match' } }, meta: { $ref: '#/components/schemas/PaginationMeta' } } } } } } }
+      },
+      post: {
+        tags: ['Matches'], summary: 'Criar partida', security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['home_team_id', 'away_team_id', 'match_date', 'stadium', 'city', 'stage'],
+                properties: {
+                  home_team_id: { type: 'integer' }, away_team_id: { type: 'integer' },
+                  home_score: { type: 'integer' }, away_score: { type: 'integer' },
+                  match_date: { type: 'string', format: 'date-time' },
+                  stadium: { type: 'string' }, city: { type: 'string' },
+                  stage: { type: 'string', enum: ['Fase de Grupos', 'Oitavas', 'Quartas', 'Semifinal', 'Final'] },
+                  status: { type: 'string', enum: ['Agendado', 'Em andamento', 'Encerrado'] },
+                  image: { type: 'string', format: 'binary', description: 'jpg/png/webp, máx 2MB' }
+                }
+              }
+            }
+          }
+        },
+        responses: { 201: { description: 'Criado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Match' } } } }, 400: { $ref: '#/components/responses/BadRequest' }, 422: { description: 'stage/status inválido' }, 401: { $ref: '#/components/responses/Unauthorized' }, 403: { $ref: '#/components/responses/Forbidden' } }
+      }
+    },
+    '/matches/{id}': {
+      get: { tags: ['Matches'], summary: 'Partida por ID (inclui home_team e away_team)', parameters: [{ $ref: '#/components/parameters/IdIntPath' }], responses: { 200: { description: 'OK', content: { 'application/json': { schema: { $ref: '#/components/schemas/Match' } } } }, 404: { $ref: '#/components/responses/NotFound' } } },
+      put: {
+        tags: ['Matches'], summary: 'Atualizar partida (incl. placar)', security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdIntPath' }],
+        requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { home_team_id: { type: 'integer' }, away_team_id: { type: 'integer' }, home_score: { type: 'integer' }, away_score: { type: 'integer' }, match_date: { type: 'string', format: 'date-time' }, stadium: { type: 'string' }, city: { type: 'string' }, stage: { type: 'string' }, status: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } },
+        responses: { 200: { description: 'Atualizado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Match' } } } }, 404: { $ref: '#/components/responses/NotFound' } }
+      },
+      patch: {
+        tags: ['Matches'], summary: 'Atualizar partida parcialmente', security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdIntPath' }],
+        requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { home_score: { type: 'integer' }, away_score: { type: 'integer' }, status: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } },
+        responses: { 200: { description: 'Atualizado' }, 404: { $ref: '#/components/responses/NotFound' } }
+      },
+      delete: { tags: ['Matches'], summary: 'Remover partida', security: [{ bearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdIntPath' }], responses: { 204: { $ref: '#/components/responses/NoContent' }, 404: { $ref: '#/components/responses/NotFound' } } }
+    },
+
+    // ─── NEWS (Copa 2026) ──────────────────────────────────────────────────
+    '/news': {
+      get: {
+        tags: ['News'],
+        summary: 'Listar notícias (paginadas)',
+        parameters: [
+          { name: 'category', in: 'query', schema: { type: 'string', enum: ['Resultados', 'Seleções', 'Jogadores', 'Curiosidades'] } },
+          { name: 'page', in: 'query', schema: { type: 'integer', default: 1 } },
+          { name: 'per_page', in: 'query', schema: { type: 'integer', default: 15 } }
+        ],
+        responses: { 200: { description: 'OK', content: { 'application/json': { schema: { type: 'object', properties: { data: { type: 'array', items: { $ref: '#/components/schemas/News' } }, meta: { $ref: '#/components/schemas/PaginationMeta' } } } } } } }
+      },
+      post: {
+        tags: ['News'], summary: 'Criar notícia', security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['title', 'content', 'summary', 'author', 'published_at', 'category'],
+                properties: {
+                  title: { type: 'string' }, content: { type: 'string' }, summary: { type: 'string' },
+                  author: { type: 'string' }, published_at: { type: 'string', format: 'date-time' },
+                  category: { type: 'string', enum: ['Resultados', 'Seleções', 'Jogadores', 'Curiosidades'] },
+                  image: { type: 'string', format: 'binary', description: 'jpg/png/webp, máx 2MB' }
+                }
+              }
+            }
+          }
+        },
+        responses: { 201: { description: 'Criado', content: { 'application/json': { schema: { $ref: '#/components/schemas/News' } } } }, 400: { $ref: '#/components/responses/BadRequest' }, 422: { description: 'category inválida' }, 401: { $ref: '#/components/responses/Unauthorized' }, 403: { $ref: '#/components/responses/Forbidden' } }
+      }
+    },
+    '/news/{id}': {
+      get: { tags: ['News'], summary: 'Notícia por ID', parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], responses: { 200: { description: 'OK', content: { 'application/json': { schema: { $ref: '#/components/schemas/News' } } } }, 404: { $ref: '#/components/responses/NotFound' } } },
+      put: {
+        tags: ['News'], summary: 'Atualizar notícia', security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdUuidPath' }],
+        requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { title: { type: 'string' }, content: { type: 'string' }, summary: { type: 'string' }, author: { type: 'string' }, published_at: { type: 'string', format: 'date-time' }, category: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } },
+        responses: { 200: { description: 'Atualizado', content: { 'application/json': { schema: { $ref: '#/components/schemas/News' } } } }, 404: { $ref: '#/components/responses/NotFound' } }
+      },
+      patch: {
+        tags: ['News'], summary: 'Atualizar notícia parcialmente', security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: '#/components/parameters/IdUuidPath' }],
+        requestBody: { content: { 'multipart/form-data': { schema: { type: 'object', properties: { title: { type: 'string' }, content: { type: 'string' }, summary: { type: 'string' }, author: { type: 'string' }, published_at: { type: 'string', format: 'date-time' }, category: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } },
+        responses: { 200: { description: 'Atualizado' }, 404: { $ref: '#/components/responses/NotFound' } }
+      },
+      delete: { tags: ['News'], summary: 'Remover notícia', security: [{ bearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdUuidPath' }], responses: { 204: { $ref: '#/components/responses/NoContent' }, 404: { $ref: '#/components/responses/NotFound' } } }
     }
   }
 };
+
+// ─── Projetos novos (spec): Dentro do Jogo (reescrito) + 5 novos ─────────────
+// Mescla schemas, tags e paths de swagger.newProjects.js. As definições novas
+// usam camelCase e o envelope { data, message } / { data, meta }, sobrescrevendo
+// as antigas da Copa (snake_case/uuid, prefixo /groups), agora removidas.
+const newProjects = require('./swagger.newProjects');
+
+for (const stalePath of ['/groups', '/groups/{id}', '/teams', '/teams/{id}', '/matches', '/matches/{id}', '/news', '/news/{id}']) {
+  delete swaggerSpec.paths[stalePath];
+}
+swaggerSpec.tags = swaggerSpec.tags.filter((t) => !['Groups', 'Teams', 'Matches', 'News'].includes(t.name));
+
+swaggerSpec.tags.push(...newProjects.tags);
+Object.assign(swaggerSpec.components.schemas, newProjects.schemas);
+Object.assign(swaggerSpec.paths, newProjects.paths);
 
 module.exports = swaggerSpec;
