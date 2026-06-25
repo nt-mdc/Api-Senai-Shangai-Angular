@@ -243,3 +243,67 @@ model HardwareItem {
   preco                   Float
   imagem_url              String
 }
+
+model HardwareVideo {
+  id        String @id @default(uuid())
+  url       String
+  titulo    String
+  descricao String @db.Text
+}
+
+// ─── Dentro do Jogo — Portal Copa do Mundo FIFA 2026 ─────────────────────────
+
+model Group {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  image       String? // URL pública (Vercel Blob)
+
+  teams Team[]
+}
+
+model Team {
+  id            Int     @id @default(autoincrement())
+  name          String
+  country_code  String
+  group_id      String?
+  wins          Int     @default(0)
+  losses        Int     @default(0)
+  draws         Int     @default(0)
+  points        Int     @default(0)
+  goals_for     Int     @default(0)
+  goals_against Int     @default(0)
+  image         String? // URL pública (Vercel Blob)
+
+  group        Group?  @relation(fields: [group_id], references: [id], onDelete: SetNull)
+  home_matches Match[] @relation("HomeTeam")
+  away_matches Match[] @relation("AwayTeam")
+}
+
+model Match {
+  id           Int      @id @default(autoincrement())
+  home_team_id Int
+  away_team_id Int
+  home_score   Int?
+  away_score   Int?
+  match_date   DateTime
+  stadium      String
+  city         String
+  stage        String
+  status       String   @default("Agendado")
+  image        String? // URL pública (Vercel Blob)
+
+  home_team Team @relation("HomeTeam", fields: [home_team_id], references: [id])
+  away_team Team @relation("AwayTeam", fields: [away_team_id], references: [id])
+}
+
+model News {
+  id           String   @id @default(uuid())
+  title        String
+  content      String   @db.Text
+  summary      String
+  author       String
+  published_at DateTime
+  category     String
+  image        String? // URL pública (Vercel Blob)
+}
